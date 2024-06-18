@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <RuntimeIdentifiers>win-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
+    <VersionPrefix>$(VersionPrefix)</VersionPrefix>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
+    <PackageReference Include="Microsoft.Azure.SpaceSDK.Core" Version="$([System.IO.File]::ReadAllText('/spacefx-dev/config/spacefx_version'))" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="/workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(Configuration)'=='Release'">
+      <ItemGroup>
+        <None Include="appsettings.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+        <None Include="appsettings.Development.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+        <None Include="appsettings.IntegrationTest.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+      </ItemGroup>
+    </When>
+  </Choose>
+</Project>

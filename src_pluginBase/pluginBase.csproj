@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins</PackageId>
+    <PackageTags>Microsoft Azure Space SDK;Microsoft;Azure;Space;</PackageTags>
+    <Description>
+      Base class for Link Service Plugins
+    </Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RuntimeIdentifiers>win-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
+    <PackageReference Include="Microsoft.Azure.SpaceSDK.Core" Version="$([System.IO.File]::ReadAllText('/spacefx-dev/config/spacefx_version'))" />
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="/workspaces/hostsvc-link/src/Protos/Link.proto" GrpcServices="Client" Access="Public" ProtoCompile="True" CompileOutputs="True" ProtoRoot="/workspaces/hostsvc-link/src/Protos" AdditionalImportDirs="/workspaces/hostsvc-link/spacedev_cache/protos/" OutputDir="obj/Debug/net6.0/"></Protobuf>
+  </ItemGroup>
+</Project>

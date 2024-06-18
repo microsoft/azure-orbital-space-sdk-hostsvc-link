@@ -1,0 +1,9 @@
+{
+    "pluginFile": "integrationTestPlugin.dll",
+    "pluginName": "integrationTestPlugin",
+    "targetService": "hostsvc-sensor",
+    "plugin_permissions": "ALL",
+    "core_permissions": "ALL",
+    "build_artifacts": [],
+    "configuration": {}
+}

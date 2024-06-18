@@ -1,14 +1,76 @@
-# Project
+# Azure Orbital Space SDK - Hostsvc-Link
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+[![spacefx-dev-build-publish](https://github.com/microsoft/azure-orbital-space-sdk-core/actions/workflows/devcontainer-feature-build-publish.yml/badge.svg)](https://github.com/microsoft/azure-orbital-space-sdk-core/actions/workflows/devcontainer-feature-build-publish.yml)
 
-As the maintainer of this project, please make a few updates:
+Link Service is the Azure Orbital Space SDK's host service to upload and download files to/from the ground. This is used for updating an app's configuration, sending a payload app's output to the ground, or sending a file to another satellite.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+Outputs:
+
+| Item                                                            | Description                                                                      |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `Microsoft.Azure.SpaceFx.HostServices.Link.Plugins.1.0.0.nupkg` | DotNet Nuget Package for building Hostsvc-Link Plugins                           |
+| `Link.proto`                                                    | A protobuf file for serializing and deserializing messages used by Hostsvc-Link. |
+| `hostsvc-link:0.11.0`                                           | Container image for app                                                          |
+| `hostsvc-link:0.11.0_base`                                      | Base container image for app.  Requires SpaceSDK_Base and build service          |
+
+## Building
+
+1. Provision /var/spacedev
+
+    ```bash
+    # clone the azure-orbital-space-sdk-setup repo and provision /var/spacedev
+    git clone https://github.com/microsoft/azure-orbital-space-sdk-setup
+    cd azure-orbital-space-sdk-setup
+    bash ./.vscode/copy_to_spacedev.sh
+    cd -
+    ```
+
+1. Build the nuget packages and the container images.  (Note: container images will automatically push)
+
+    ```bash
+    # clone this repo
+    git clone https://github.com/microsoft/azure-orbital-space-sdk-hostsvc-link
+
+    cd azure-orbital-space-sdk-hostsvc-link
+
+    # Trigger the build_app.sh from azure-orbital-space-sdk-setup
+    /var/spacedev/build/dotnet/build_app.sh \
+        --repo-dir ${PWD} \
+        --app-project src/hostsvc-link.csproj \
+        --nuget-project src_pluginBase/pluginBase.csproj \
+        --architecture amd64 \
+        --output-dir /var/spacedev/tmp/hostsvc-link \
+        --app-version 0.11.0 \
+        --annotation-config azure-orbital-space-sdk-hostsvc-link.yaml
+    ```
+
+1. Copy the build artifacts to their locations in /var/spacedev
+
+    ```bash
+    sudo mkdir -p /var/spacedev/nuget/link
+    sudo mkdir -p /var/spacedev/protos/spacefx/protos/link
+
+    sudo cp /var/spacedev/tmp/hostsvc-link/amd64/nuget/Microsoft.Azure.SpaceFx.HostServices.link.Plugins.0.11.0.nupkg /var/spacedev/nuget/link/
+    sudo cp ${PWD}/src/Protos/link.proto /var/spacedev/protos/spacefx/protos/link/
+    ```
+
+1. Push the artifacts to the container registry
+
+    ```bash
+    # Push the nuget package to the container registry
+    /var/spacedev/build/push_build_artifact.sh \
+            --artifact /var/spacedev/nuget/link/Microsoft.Azure.SpaceFx.HostServices.link.Plugins.0.11.0.nupkg \
+            --annotation-config azure-orbital-space-sdk-hostsvc-link.yaml \
+            --architecture amd64 \
+            --artifact-version 0.11.0
+
+    # Push the proto to the container registry
+    /var/spacedev/build/push_build_artifact.sh \
+            --artifact /var/spacedev/protos/spacefx/protos/link/link.proto \
+            --annotation-config azure-orbital-space-sdk-hostsvc-link.yaml \
+            --architecture amd64 \
+            --artifact-version 0.11.0
+    ```
 
 ## Contributing
 
@@ -26,8 +88,8 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
+trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
