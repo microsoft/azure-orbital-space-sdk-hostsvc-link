@@ -82,7 +82,7 @@
 						"packages": "read"
 					}
 				},
-				"microsoft/azure-orbital-space-sdk-hostsvc-link": {
+				"microsoft/azure-orbital-space-sdk-hostsvc-position": {
 					"permissions": {
 						"contents": "read",
 						"packages": "read"
