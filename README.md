@@ -50,8 +50,8 @@ Outputs:
     sudo mkdir -p /var/spacedev/nuget/link
     sudo mkdir -p /var/spacedev/protos/spacefx/protos/link
 
-    sudo cp /var/spacedev/tmp/hostsvc-link/amd64/nuget/Microsoft.Azure.SpaceFx.HostServices.link.Plugins.0.11.0.nupkg /var/spacedev/nuget/link/
-    sudo cp ${PWD}/src/Protos/link.proto /var/spacedev/protos/spacefx/protos/link/
+    sudo cp /var/spacedev/tmp/hostsvc-link/amd64/nuget/Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins.0.11.0.nupkg /var/spacedev/nuget/link/
+    sudo cp ${PWD}/src/Protos/Link.proto /var/spacedev/protos/spacefx/protos/link/
     ```
 
 1. Push the artifacts to the container registry
@@ -59,14 +59,14 @@ Outputs:
     ```bash
     # Push the nuget package to the container registry
     /var/spacedev/build/push_build_artifact.sh \
-            --artifact /var/spacedev/nuget/link/Microsoft.Azure.SpaceFx.HostServices.link.Plugins.0.11.0.nupkg \
+            --artifact /var/spacedev/nuget/link/Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins.0.11.0.nupkg \
             --annotation-config azure-orbital-space-sdk-hostsvc-link.yaml \
             --architecture amd64 \
             --artifact-version 0.11.0
 
     # Push the proto to the container registry
     /var/spacedev/build/push_build_artifact.sh \
-            --artifact /var/spacedev/protos/spacefx/protos/link/link.proto \
+            --artifact /var/spacedev/protos/spacefx/protos/link/Link.proto \
             --annotation-config azure-orbital-space-sdk-hostsvc-link.yaml \
             --architecture amd64 \
             --artifact-version 0.11.0
