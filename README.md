@@ -6,12 +6,11 @@ Link Service is the Azure Orbital Space SDK's host service to upload and downloa
 
 Outputs:
 
-| Item                                                            | Description                                                                      |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `Microsoft.Azure.SpaceFx.HostServices.Link.Plugins.1.0.0.nupkg` | DotNet Nuget Package for building Hostsvc-Link Plugins                           |
-| `Link.proto`                                                    | A protobuf file for serializing and deserializing messages used by Hostsvc-Link. |
-| `hostsvc-link:0.11.0`                                           | Container image for app                                                          |
-| `hostsvc-link:0.11.0_base`                                      | Base container image for app.  Requires SpaceSDK_Base and build service          |
+| Item                                                            | Description                                                             |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `Microsoft.Azure.SpaceFx.HostServices.Link.Plugins.1.0.0.nupkg` | DotNet Nuget Package for building Hostsvc-Link Plugins                  |
+| `hostsvc-link:0.11.0`                                           | Container image for app                                                 |
+| `hostsvc-link:0.11.0_base`                                      | Base container image for app.  Requires SpaceSDK_Base and build service |
 
 ## Building
 
@@ -48,10 +47,8 @@ Outputs:
 
     ```bash
     sudo mkdir -p /var/spacedev/nuget/link
-    sudo mkdir -p /var/spacedev/protos/spacefx/protos/link
 
     sudo cp /var/spacedev/tmp/hostsvc-link/amd64/nuget/Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins.0.11.0.nupkg /var/spacedev/nuget/link/
-    sudo cp ${PWD}/src/Protos/Link.proto /var/spacedev/protos/spacefx/protos/link/
     ```
 
 1. Push the artifacts to the container registry
@@ -64,12 +61,6 @@ Outputs:
             --architecture amd64 \
             --artifact-version 0.11.0
 
-    # Push the proto to the container registry
-    /var/spacedev/build/push_build_artifact.sh \
-            --artifact /var/spacedev/protos/spacefx/protos/link/Link.proto \
-            --annotation-config azure-orbital-space-sdk-hostsvc-link.yaml \
-            --architecture amd64 \
-            --artifact-version 0.11.0
     ```
 
 ## Contributing
