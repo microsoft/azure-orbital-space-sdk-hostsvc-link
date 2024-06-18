@@ -18,6 +18,6 @@
     <PackageReference Include="Microsoft.Azure.SpaceSDK.Core" Version="$([System.IO.File]::ReadAllText('/spacefx-dev/config/spacefx_version'))" />
   </ItemGroup>
   <ItemGroup>
-    <Protobuf Include="/workspaces/hostsvc-link/src/Protos/Link.proto" GrpcServices="Client" Access="Public" ProtoCompile="True" CompileOutputs="True" ProtoRoot="/workspaces/hostsvc-link/src/Protos" AdditionalImportDirs="/workspaces/hostsvc-link/spacedev_cache/protos/" OutputDir="obj/Debug/net6.0/"></Protobuf>
+    <Protobuf Include="/var/spacedev/protos/spacefx/link/Link.proto" GrpcServices="Client" Access="Public" ProtoCompile="True" CompileOutputs="True" ProtoRoot="/var/spacedev/protos" OutputDir="obj/Debug/net6.0/"></Protobuf>
   </ItemGroup>
 </Project>
