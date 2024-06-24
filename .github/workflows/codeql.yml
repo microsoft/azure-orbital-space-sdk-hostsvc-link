@@ -99,7 +99,7 @@ jobs:
       name: create-symlink
       shell: bash
       run: |
-        sudo ln -s /var/spacedev /spacefx-dev
+        sudo ln -s /var/spacedev ./spacefx-dev
 
     - if: matrix.build-mode == 'manual'
       name: manual-build-project-service
