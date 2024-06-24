@@ -90,7 +90,7 @@ jobs:
         ARCHITECTURE: amd64
         APP_PROJECT: ./src/hostsvc-link.csproj
         NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
-        APP_VERSION: codeql
+        APP_VERSION: 9.9.9
         OUTPUT_DIR: /var/spacedev/tmp/hostsvc-link
         ANNOTATION_CONFIG: azure-orbital-space-sdk-hostsvc-link.yaml
         NO_CONTAINER_BUILD: 'true'
