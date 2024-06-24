@@ -101,6 +101,7 @@ jobs:
       run: |
         sudo ln -s /var/spacedev ./spacefx-dev
         echo "Output of symlink:"
+        echo "------------------"
         tree ./spacefx-dev
 
     - if: matrix.build-mode == 'manual'
