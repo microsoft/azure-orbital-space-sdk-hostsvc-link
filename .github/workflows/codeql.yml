@@ -104,7 +104,7 @@ jobs:
         tree ./src/bin
 
     - if: matrix.build-mode == 'manual'
-      name: manual-build-project-plugin
+      name: manual-build-project-plugin-base
       shell: bash
       run: |
         docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
