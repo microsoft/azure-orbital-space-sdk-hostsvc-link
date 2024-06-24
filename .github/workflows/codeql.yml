@@ -84,32 +84,26 @@ jobs:
         GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
         SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
 
-    - if: matrix.build-mode == 'manual'
-      uses: microsoft/azure-orbital-space-sdk-github-actions/composite-actions/build-app@main
-      with:
-        ARCHITECTURE: amd64
-        APP_PROJECT: ./src/hostsvc-link.csproj
-        NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
-        APP_VERSION: 9.9.9
-        OUTPUT_DIR: /var/spacedev/tmp/hostsvc-link
-        ANNOTATION_CONFIG: azure-orbital-space-sdk-hostsvc-link.yaml
-        NO_CONTAINER_BUILD: 'true'
-
-    - if: matrix.build-mode == 'manual'
-      name: create-symlink
+    - name: Build Devcontainer
       shell: bash
       run: |
-        sudo ln -s /var/spacedev ./spacefx-dev
-        echo "Output of symlink:"
-        echo "------------------"
-        tree ./spacefx-dev
 
+        devcontainer up --workspace-folder ${PWD} \
+            --workspace-mount-consistency cached \
+            --id-label devcontainer.local_folder=${PWD} \
+            --default-user-env-probe loginInteractiveShell \
+            --build-no-cache \
+            --remove-existing-container \
+            --mount type=volume,source=vscode,target=/vscode,external=true \
+            --update-remote-user-uid-default on \
+            --mount-workspace-git-root true
+        echo $?
+        
     - if: matrix.build-mode == 'manual'
       name: manual-build-project-service
       shell: bash
       run: |
-        # docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src"
-        dotnet build ./src
+        docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src"
         echo "output build directory:"
         tree ./src/bin
 
@@ -117,8 +111,7 @@ jobs:
       name: manual-build-project-plugin-base
       shell: bash
       run: |
-        # docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
-        dotnet build ./src_pluginBase/pluginBase.csproj
+        docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
         echo "output build directory:"
         tree ./src_pluginBase/bin
 
