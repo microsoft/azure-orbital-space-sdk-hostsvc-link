@@ -104,7 +104,18 @@ jobs:
         echo ""
         echo "./src_pluginBase directory:"
         tree ./src_pluginBase/bin
-      
+        
+    - if: matrix.build-mode == 'manual'
+      name: manual-build-project
+      shell: bash
+      run: |
+        donet build ./src/hostsvc-link.csproj
+
+    - if: matrix.build-mode == 'manual'
+      name: manual-build-project
+      shell: bash
+      run: |
+        donet build ./src_pluginBase/pluginBase.csproj
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
