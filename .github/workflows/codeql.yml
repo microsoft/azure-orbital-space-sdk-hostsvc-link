@@ -95,6 +95,17 @@ jobs:
         ANNOTATION_CONFIG: azure-orbital-space-sdk-hostsvc-link.yaml
         NO_CONTAINER_BUILD: 'true'
 
+    - if: matrix.build-mode == 'manual'
+      name: Check build directories
+      shell: bash
+      run: |
+        echo "./src directory:"
+        tree ./src/bin
+        echo ""
+        echo "./src_pluginBase directory:"
+        tree ./src_pluginBase/bin
+      
+
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
