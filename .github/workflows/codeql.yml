@@ -96,6 +96,12 @@ jobs:
         NO_CONTAINER_BUILD: 'true'
 
     - if: matrix.build-mode == 'manual'
+      name: create-symlink
+      shell: bash
+      run: |
+        sudo ln -s /var/spacedev /spacefx-dev
+
+    - if: matrix.build-mode == 'manual'
       name: manual-build-project-service
       shell: bash
       run: |
