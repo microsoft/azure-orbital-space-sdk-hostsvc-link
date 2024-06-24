@@ -96,7 +96,7 @@ jobs:
         NO_CONTAINER_BUILD: 'true'
 
     - if: matrix.build-mode == 'manual'
-      name: manual-build-project
+      name: manual-build-project-service
       shell: bash
       run: |
         docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src"
@@ -104,10 +104,10 @@ jobs:
         tree ./src/bin
 
     - if: matrix.build-mode == 'manual'
-      name: manual-build-project
+      name: manual-build-project-plugin
       shell: bash
       run: |
-        docker exec hostsvc-link bash -c "dotnet build ./src_pluginBase/pluginBase.csproj"  
+        docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
         echo "output build directory:"
         tree ./src_pluginBase/bin
 
