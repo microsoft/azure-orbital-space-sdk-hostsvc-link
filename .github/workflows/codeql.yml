@@ -96,16 +96,6 @@ jobs:
         NO_CONTAINER_BUILD: 'true'
 
     - if: matrix.build-mode == 'manual'
-      name: Check build directories
-      shell: bash
-      run: |
-        echo "./src directory:"
-        tree ./src/bin
-        echo ""
-        echo "./src_pluginBase directory:"
-        tree ./src_pluginBase/bin
-        
-    - if: matrix.build-mode == 'manual'
       name: manual-build-project
       shell: bash
       run: |
