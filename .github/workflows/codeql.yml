@@ -90,9 +90,10 @@ jobs:
         ARCHITECTURE: amd64
         APP_PROJECT: ./src/hostsvc-link.csproj
         NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
+        APP_VERSION: codeql
         OUTPUT_DIR: /var/spacedev/tmp/hostsvc-link
         ANNOTATION_CONFIG: azure-orbital-space-sdk-hostsvc-link.yaml
-        NO_CONTAINER_BUILD: 'false'
+        NO_CONTAINER_BUILD: 'true'
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
