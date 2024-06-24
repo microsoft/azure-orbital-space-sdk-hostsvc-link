@@ -1,0 +1,48 @@
+name: hostsvc-link-build
+
+on: 
+    workflow_dispatch:
+    push:
+        branches:
+        - main
+
+jobs:
+  build-hostsvc-link-amd64:
+    permissions:
+      contents: read
+      packages: write
+
+    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@main
+    with:
+      APP_PROJECT: ./src/hostsvc-link.csproj
+      NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
+      OUTPUT_DIR: /var/spacedev/tmp/hostsvc-link
+      NUGET_STAGING_DIRECTORY: /var/spacedev/nuget/link
+      NUGET_FILE_PREFIX: Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins
+      ANNOTATION: azure-orbital-space-sdk-hostsvc-link.yaml
+      WORKFLOW_AGENT: ubuntu-latest
+      ARCHITECTURE: amd64
+    secrets:
+      GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
+      GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
+      SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
+
+  build-hostsvc-link-arm64:
+    permissions:
+      contents: read
+      packages: write
+
+    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@main
+    with:
+      APP_PROJECT: ./src/hostsvc-link.csproj
+      NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
+      OUTPUT_DIR: /var/spacedev/tmp/hostsvc-link
+      NUGET_STAGING_DIRECTORY: /var/spacedev/nuget/link
+      NUGET_FILE_PREFIX: Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins
+      ANNOTATION: azure-orbital-space-sdk-hostsvc-link.yaml
+      WORKFLOW_AGENT: spacesdk-ubuntu-2204LTS-arm64
+      ARCHITECTURE: arm64
+    secrets:
+      GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
+      GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
+      SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
