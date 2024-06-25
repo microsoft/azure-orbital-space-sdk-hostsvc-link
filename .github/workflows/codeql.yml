@@ -79,7 +79,7 @@ jobs:
       shell: bash
       run: |
         echo "Determine the latest release version of CodeQL CLI"
-        docker exec hostsvc-link bash -c "LATEST_RELEASE=$(curl -s https://api.github.com/repos/github/codeql-cli-binaries/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}')""
+        docker exec hostsvc-link bash -c "LATEST_RELEASE=$(curl -s https://api.github.com/repos/github/codeql-cli-binaries/releases/latest | grep \"tag_name\" | awk '{print substr($2, 2, length($2)-3)}')"
 
         echo "Define the download URL and target directory"
         docker exec hostsvc-link bash -c "DOWNLOAD_URL=\"https://github.com/github/codeql-cli-binaries/releases/download/${LATEST_RELEASE}/codeql-linux64.zip\""
