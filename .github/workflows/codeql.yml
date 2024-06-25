@@ -20,30 +20,8 @@ on:
     - cron: '32 5 * * 4'
 
 jobs:
-  # build-hostsvc-link-scan-image:
-  #   permissions:
-  #     contents: read
-  #     packages: write
-
-  #   uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@main
-  #   with:
-  #     APP_PROJECT: ./src/hostsvc-link.csproj
-  #     NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
-  #     OUTPUT_DIR: /var/spacedev/tmp/hostsvc-link
-  #     NUGET_STAGING_DIRECTORY: /var/spacedev/nuget/link
-  #     NUGET_FILE_PREFIX: Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins
-  #     ANNOTATION: azure-orbital-space-sdk-hostsvc-link.yaml
-  #     WORKFLOW_AGENT: ubuntu-latest
-  #     ARCHITECTURE: amd64
-  #     SPACESDK_VERSION: 99.99.99
-  #   secrets:
-  #     GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
-  #     GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
-  #     SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
-
   analyze:
-    name: Analyze (${{ matrix.language }})
-    ## needs: build-hostsvc-link-scan-image
+    name: Analyze (chsarp)
     
     runs-on: 'ubuntu-latest'
     timeout-minutes: 360
@@ -57,27 +35,24 @@ jobs:
       # only required for workflows in private repositories
       actions: read
       contents: read
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - language: csharp
-          build-mode: manual
-    
-    # container:
-    #   ghcr.io/microsoft/azure-orbital-space-sdk/hostsvc-link:99.99.99-nightly
-    
+   
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+
+    - uses: microsoft/azure-orbital-space-sdk-github-actions/composite-actions/initialize@main
+      with:
+        GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
+        GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
+        SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
-        languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
+        languages: csharp
+        build-mode: manual
         # If you wish to specify custom queries, you can do so here or in a config file.
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
@@ -85,21 +60,7 @@ jobs:
         # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         # queries: security-extended,security-and-quality
 
-    # If the analyze step fails for one of the languages you are analyzing with
-    # "We were unable to automatically build your code", modify the matrix above
-    # to set the build mode to "manual" for that language. Then modify this step
-    # to build your code.
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
-    - if: matrix.build-mode == 'manual'
-      uses: microsoft/azure-orbital-space-sdk-github-actions/composite-actions/initialize@main
-      with:
-        GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
-        GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
-        SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
-
-    - if: matrix.build-mode == 'manual'
-      name: Build Devcontainer
+    - name: Build Devcontainer
       shell: bash
       run: |
 
@@ -114,16 +75,14 @@ jobs:
             --mount-workspace-git-root true
         echo $?
         
-    - if: matrix.build-mode == 'manual'
-      name: manual-build-project-service
+    - name: manual-build-project-service
       shell: bash
       run: |
         docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src"
         echo "output build directory:"
         tree ./src/bin
 
-    - if: matrix.build-mode == 'manual'
-      name: manual-build-project-plugin-base
+    - name: manual-build-project-plugin-base
       shell: bash
       run: |
         docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
@@ -133,7 +92,7 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        category: "/language:${{matrix.language}}"
+        category: "/language:charp"
 
         # Running the analysis
         # Run a current test
