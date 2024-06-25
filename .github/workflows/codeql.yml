@@ -40,12 +40,26 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-
     - uses: microsoft/azure-orbital-space-sdk-github-actions/composite-actions/initialize@main
       with:
         GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
         GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
         SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
+
+    - name: Stand up Devcontainer
+      shell: bash
+      run: |
+  
+        devcontainer up --workspace-folder ${PWD} \
+            --workspace-mount-consistency cached \
+            --id-label devcontainer.local_folder=${PWD} \
+            --default-user-env-probe loginInteractiveShell \
+            --build-no-cache \
+            --remove-existing-container \
+            --mount type=volume,source=vscode,target=/vscode,external=true \
+            --update-remote-user-uid-default on \
+            --mount-workspace-git-root true
+        echo $?
 
     - name: install-codeql
       shell: bash
@@ -68,21 +82,6 @@ jobs:
         docker exec hostsvc-link bash -c "rm \"${{ github.workspace }}/codeql/codeql.zip\""
 
         echo "CodeQL CLI installation completed."
-
-    - name: Stand up Devcontainer
-      shell: bash
-      run: |
-
-        devcontainer up --workspace-folder ${PWD} \
-            --workspace-mount-consistency cached \
-            --id-label devcontainer.local_folder=${PWD} \
-            --default-user-env-probe loginInteractiveShell \
-            --build-no-cache \
-            --remove-existing-container \
-            --mount type=volume,source=vscode,target=/vscode,external=true \
-            --update-remote-user-uid-default on \
-            --mount-workspace-git-root true
-        echo $?
 
     - name: codeql-init
       shell: bash
