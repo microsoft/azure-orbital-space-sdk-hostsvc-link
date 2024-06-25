@@ -10,7 +10,6 @@ public partial class Services {
         private readonly BlockingCollection<MessageFormats.HostServices.Link.LinkResponse> _linkResponseQueue;
         private readonly Models.APP_CONFIG _appConfig;
         private readonly Core.Client _client;
-        private string _all_xfer_dir = string.Empty;
         private readonly string PLATFORM_MTS_ID = $"platform-{nameof(MessageFormats.Common.PlatformServices.Mts).ToLower()}";
         private readonly JsonSerializerOptions jsonOptions = new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault, PropertyNameCaseInsensitive = true, MaxDepth = 100, WriteIndented = true };
         public FileMoverService(ILogger<FileMoverService> logger, IServiceProvider serviceProvider, Utils.PluginDelegates pluginDelegates, Core.Services.PluginLoader pluginLoader, Core.Client client) {
@@ -21,7 +20,6 @@ public partial class Services {
             _appConfig = new Models.APP_CONFIG();
             _linkResponseQueue = new();
             _client = client;
-            _all_xfer_dir = client.GetXFerDirectories().Result.root_directory.Replace("xfer", "allxfer");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
@@ -46,17 +44,16 @@ public partial class Services {
                             linkResponse.LinkRequest.DestinationAppId = linkResponse.LinkRequest.DestinationAppId.ToLower();
 
 
-                            string destDirPath = Path.Combine(_all_xfer_dir, linkResponse.LinkRequest.DestinationAppId, "inbox");
-                            string sourceDirPath = Path.Combine(_all_xfer_dir, linkResponse.LinkRequest.RequestHeader.AppId, "outbox");
+                            string destDirPath = Path.Combine(_appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.DestinationAppId, "inbox");
+                            string sourceDirPath = Path.Combine(_appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.RequestHeader.AppId, "outbox");
 
-                            _logger.LogDebug("Checking if directory exists ('{xfer_directory}/{sourceAppName}') (trackingId: '{trackingId}' / correlationId: '{correlationId}')", _all_xfer_dir, linkResponse.LinkRequest.RequestHeader.AppId, linkResponse.LinkRequest.RequestHeader.TrackingId, linkResponse.LinkRequest.RequestHeader.CorrelationId);
+                            _logger.LogDebug("Checking if directory exists ('{xfer_directory}/{sourceAppName}') (trackingId: '{trackingId}' / correlationId: '{correlationId}')", _appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.RequestHeader.AppId, linkResponse.LinkRequest.RequestHeader.TrackingId, linkResponse.LinkRequest.RequestHeader.CorrelationId);
 
-                            if (!Directory.Exists(Path.Combine(_all_xfer_dir, linkResponse.LinkRequest.RequestHeader.AppId))) {
-                                _logger.LogError("Received a Link Request with an inaccessibale source path.  Source path '{sourcePath}' (trackingId: '{trackingId}' / correlationId: '{correlationId}')", Path.Combine(_all_xfer_dir, linkResponse.LinkRequest.RequestHeader.AppId), linkResponse.LinkRequest.RequestHeader.TrackingId, linkResponse.LinkRequest.RequestHeader.CorrelationId);
-                                linkResponse.ResponseHeader.Status = MessageFormats.Common.StatusCodes.NotFound;
-                                linkResponse.ResponseHeader.Message = string.Format($"Link Service can't access '{Path.Combine(_all_xfer_dir, linkResponse.LinkRequest.RequestHeader.AppId)}'.  Unable to process LinkRequest.");
-                                await SendResponseToApps(linkResponse);
-                                continue;
+                            if (!Directory.Exists(Path.Combine(_appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.RequestHeader.AppId))) {
+                                _logger.LogInformation("Received a Link Request with an inaccessibale source path.  Source path '{sourcePath}' (trackingId: '{trackingId}' / correlationId: '{correlationId}')", Path.Combine(_appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.RequestHeader.AppId), linkResponse.LinkRequest.RequestHeader.TrackingId, linkResponse.LinkRequest.RequestHeader.CorrelationId);
+                                System.IO.Directory.CreateDirectory(Path.Combine(_appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.RequestHeader.AppId));
+                                System.IO.Directory.CreateDirectory(Path.Combine(_appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.RequestHeader.AppId, "inbox"));
+                                System.IO.Directory.CreateDirectory(Path.Combine(_appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.RequestHeader.AppId, "outbox"));
                             }
 
                             // Run through checks for valid Subdirectory
@@ -85,7 +82,7 @@ public partial class Services {
 
                                 // Check if we have a valid source directory
                                 if (!Directory.Exists(Path.Combine(sourceDirPath, linkResponse.LinkRequest.Subdirectory))) {
-                                    _logger.LogError("Received a Link Request with an inaccessibale source path.  Source path '{sourcePath}' (trackingId: '{trackingId}' / correlationId: '{correlationId}')", Path.Combine(_all_xfer_dir, linkResponse.LinkRequest.RequestHeader.AppId, linkResponse.LinkRequest.Subdirectory), linkResponse.LinkRequest.RequestHeader.TrackingId, linkResponse.LinkRequest.RequestHeader.CorrelationId);
+                                    _logger.LogError("Received a Link Request with an inaccessibale source path.  Source path '{sourcePath}' (trackingId: '{trackingId}' / correlationId: '{correlationId}')", Path.Combine(_appConfig.ALL_XFER_DIR, linkResponse.LinkRequest.RequestHeader.AppId, linkResponse.LinkRequest.Subdirectory), linkResponse.LinkRequest.RequestHeader.TrackingId, linkResponse.LinkRequest.RequestHeader.CorrelationId);
                                     linkResponse.ResponseHeader.Status = MessageFormats.Common.StatusCodes.NotFound;
                                     linkResponse.ResponseHeader.Message = string.Format($"Link Service can't access '{Path.Combine(sourceDirPath, linkResponse.LinkRequest.Subdirectory)}'; directory doesn't exist..  Unable to process LinkRequest.");
                                     await SendResponseToApps(linkResponse);
