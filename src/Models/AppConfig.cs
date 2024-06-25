@@ -36,7 +36,7 @@ public static class Models {
         public APP_CONFIG() : base() {
             FILEMOVER_POLLING_MS = int.Parse(Core.GetConfigSetting("filemoverpollingms").Result);
             LEAVE_SOURCE_FILE_PROPERTY_VALUE = Core.GetConfigSetting("leavesourcefilepropertyvalue").Result;
-            ALL_XFER_DIR = System.Path.Combine(Core.GetConfigSetting("spacefx_cache").Result, Core.GetConfigSetting("allxferdirectory").Result);
+            ALL_XFER_DIR = Path.Combine(Core.GetConfigSetting("spacefx_cache").Result, Core.GetConfigSetting("allxferdirectory").Result);
         }
     }
 }
