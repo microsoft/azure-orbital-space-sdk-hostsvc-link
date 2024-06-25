@@ -83,7 +83,7 @@ jobs:
 
         echo "Define the download URL and target directory"
         docker exec hostsvc-link bash -c "DOWNLOAD_URL=\"https://github.com/github/codeql-cli-binaries/releases/download/${LATEST_RELEASE}/codeql-linux64.zip\""
-        docker exec hostsvc-link bash -c "TARGET_DIR=\"$HOME/codeql\""
+        docker exec hostsvc-link bash -c "TARGET_DIR=\"~/codeql\""
         docker exec hostsvc-link bash -c "ZIP_FILE=\"$TARGET_DIR/codeql.zip\""
 
         echo "Create target directory if it doesn't exist"
@@ -128,12 +128,10 @@ jobs:
     - name: codeql-analyze
       shell: bash
       run: |
-        docker exec hostsvc-link bash -c "codeql database analyze my-codeql-database security-extended,security-and-quality --format=csv --output=analysis-results.csv"
+        docker exec hostsvc-link bash -c "codeql database analyze my-codeql-database security-extended,security-and-quality --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+    - name: Upload analysis results
+      uses: actions/upload-artifact@v2
       with:
-        category: "/language:charp"
-
-        # Running the analysis
-        # Run a current test
+        name: codeql-analysis-results
+        path: /var/spacedev/tmp/analysis-results.csv
