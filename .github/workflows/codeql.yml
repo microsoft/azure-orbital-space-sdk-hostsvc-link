@@ -64,41 +64,44 @@ jobs:
       shell: bash
       run: |
         CONTAINER_NAME="hostsvc-link"
-
+      
         # Determine the latest release version of CodeQL CLI
         docker exec $CONTAINER_NAME bash -c "curl -s https://api.github.com/repos/github/codeql-cli-binaries/releases/latest | grep 'tag_name' | awk '{print substr(\$2, 2, length(\$2)-3)}'" > latest_release.txt
         LATEST_RELEASE=$(<latest_release.txt)
-
+      
         # Define the download URL and target directory
         DOWNLOAD_URL="https://github.com/github/codeql-cli-binaries/releases/download/${LATEST_RELEASE}/codeql-linux64.zip"
         TARGET_DIR="/root/codeql" # Adjust the target directory as per the container's file system
         ZIP_FILE="$TARGET_DIR/codeql.zip"
-
+      
         # Create target directory if it doesn't exist
         docker exec $CONTAINER_NAME bash -c "mkdir -p $TARGET_DIR"
-
+      
         # Download the latest release of CodeQL CLI
         echo "Downloading CodeQL CLI ${LATEST_RELEASE}..."
         docker exec $CONTAINER_NAME bash -c "curl -L '$DOWNLOAD_URL' -o '$ZIP_FILE'"
-
+      
         # Extract the downloaded zip file
         echo "Extracting CodeQL CLI..."
         docker exec $CONTAINER_NAME bash -c "unzip -o '$ZIP_FILE' -d '$TARGET_DIR'"
-
+      
         # Clean up the zip file
         docker exec $CONTAINER_NAME bash -c "rm '$ZIP_FILE'"
-
-        # Optionally, add CodeQL CLI to PATH by adding it to .bashrc or .bash_profile
-        # Note: This step might need adjustments based on the container's shell configuration
-        docker exec $CONTAINER_NAME bash -c "echo 'export PATH=\$PATH:$TARGET_DIR/codeql' >> /root/.bashrc"
-        docker exec $CONTAINER_NAME bash -c "source /root/.bashrc"
-
+      
+        # Find the correct path to the codeql executable and update the PATH or use it directly in subsequent commands
+        # This step is crucial and might need adjustment based on the actual structure of the CodeQL CLI zip file
+        # Assuming codeql is in /root/codeql/codeql after extraction
+        EXECUTABLE_PATH="/root/codeql/codeql"
+      
+        # Optionally, update the PATH in a way that's guaranteed to work for non-interactive shells
+        docker exec $CONTAINER_NAME bash -c "echo 'export PATH=\$PATH:$EXECUTABLE_PATH' > /etc/profile.d/codeql.sh"
+      
         echo "CodeQL CLI installation completed."
 
     - name: codeql-init
       shell: bash
       run: |
-        docker exec hostsvc-link bash -c "/root/codeql/codeql/codeql database create my-codeql-database --language=csharp"
+        docker exec hostsvc-link bash -c "/root/codeql/codeql database create my-codeql-database --language=csharp"
     
     - name: manual-build-project-service
       shell: bash
@@ -117,7 +120,7 @@ jobs:
     - name: codeql-analyze
       shell: bash
       run: |
-        docker exec hostsvc-link bash -c "/root/codeql/codeql/codeql database analyze my-codeql-database security-extended,security-and-quality --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
+        docker exec hostsvc-link bash -c "/root/codeql/codeql database analyze my-codeql-database security-extended,security-and-quality --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
 
     - name: Upload analysis results
       uses: actions/upload-artifact@v2
