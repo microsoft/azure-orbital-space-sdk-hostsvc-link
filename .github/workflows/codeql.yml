@@ -20,30 +20,30 @@ on:
     - cron: '32 5 * * 4'
 
 jobs:
-  build-hostsvc-link-scan-image:
-    permissions:
-      contents: read
-      packages: write
+  # build-hostsvc-link-scan-image:
+  #   permissions:
+  #     contents: read
+  #     packages: write
 
-    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@main
-    with:
-      APP_PROJECT: ./src/hostsvc-link.csproj
-      NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
-      OUTPUT_DIR: /var/spacedev/tmp/hostsvc-link
-      NUGET_STAGING_DIRECTORY: /var/spacedev/nuget/link
-      NUGET_FILE_PREFIX: Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins
-      ANNOTATION: azure-orbital-space-sdk-hostsvc-link.yaml
-      WORKFLOW_AGENT: ubuntu-latest
-      ARCHITECTURE: amd64
-      SPACESDK_VERSION: 99.99.99
-    secrets:
-      GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
-      GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
-      SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
+  #   uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@main
+  #   with:
+  #     APP_PROJECT: ./src/hostsvc-link.csproj
+  #     NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
+  #     OUTPUT_DIR: /var/spacedev/tmp/hostsvc-link
+  #     NUGET_STAGING_DIRECTORY: /var/spacedev/nuget/link
+  #     NUGET_FILE_PREFIX: Microsoft.Azure.SpaceSDK.HostServices.Link.Plugins
+  #     ANNOTATION: azure-orbital-space-sdk-hostsvc-link.yaml
+  #     WORKFLOW_AGENT: ubuntu-latest
+  #     ARCHITECTURE: amd64
+  #     SPACESDK_VERSION: 99.99.99
+  #   secrets:
+  #     GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
+  #     GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
+  #     SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
 
   analyze:
     name: Analyze (${{ matrix.language }})
-    needs: build-hostsvc-link-scan-image
+    ## needs: build-hostsvc-link-scan-image
     
     runs-on: 'ubuntu-latest'
     timeout-minutes: 360
