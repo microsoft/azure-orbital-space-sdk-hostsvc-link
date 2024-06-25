@@ -136,3 +136,4 @@ jobs:
         category: "/language:${{matrix.language}}"
 
         # Running the analysis
+        # Run a current test
