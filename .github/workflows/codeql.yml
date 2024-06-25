@@ -13,7 +13,7 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "km/adding_code_ql" ]
   pull_request:
     branches: [ "main" ]
   schedule:
