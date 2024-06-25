@@ -65,8 +65,8 @@ jobs:
         - language: csharp
           build-mode: manual
     
-    container:
-      ghcr.io/microsoft/azure-orbital-space-sdk/hostsvc-link:99.99.99-nightly
+    # container:
+    #   ghcr.io/microsoft/azure-orbital-space-sdk/hostsvc-link:99.99.99-nightly
     
     steps:
     - name: Checkout repository
