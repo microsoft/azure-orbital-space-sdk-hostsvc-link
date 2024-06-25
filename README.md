@@ -2,6 +2,8 @@
 
 [![hostsvc-link-build](https://github.com/microsoft/azure-orbital-space-sdk-hostsvc-link/actions/workflows/hostsvc-link-build-publish.yaml/badge.svg)](https://github.com/microsoft/azure-orbital-space-sdk-hostsvc-link/actions/workflows/hostsvc-link-build-publish.yaml)
 
+[![test-hostsvc-link](https://github.com/microsoft/azure-orbital-space-sdk-hostsvc-link/actions/workflows/hostsvc-link-test.yaml/badge.svg)](https://github.com/microsoft/azure-orbital-space-sdk-hostsvc-link/actions/workflows/hostsvc-link-test.yaml)
+
 Link Service is the Azure Orbital Space SDK's host service to upload and download files to/from the ground. This is used for updating an app's configuration, sending a payload app's output to the ground, or sending a file to another satellite.
 
 Outputs:
