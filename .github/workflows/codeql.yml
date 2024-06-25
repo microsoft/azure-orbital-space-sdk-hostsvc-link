@@ -75,19 +75,60 @@ jobs:
             --mount-workspace-git-root true
         echo $?
         
+    - name: install-codeql
+      shell: bash
+      run: |
+        echo "Determine the latest release version of CodeQL CLI"
+        docker exec hostsvc-link bash -c "LATEST_RELEASE=$(curl -s https://api.github.com/repos/github/codeql-cli-binaries/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}')""
+
+        echo "Define the download URL and target directory"
+        docker exec hostsvc-link bash -c "DOWNLOAD_URL=\"https://github.com/github/codeql-cli-binaries/releases/download/${LATEST_RELEASE}/codeql-linux64.zip\""
+        docker exec hostsvc-link bash -c "TARGET_DIR=\"$HOME/codeql\""
+        docker exec hostsvc-link bash -c "ZIP_FILE=\"$TARGET_DIR/codeql.zip\""
+
+        echo "Create target directory if it doesn't exist"
+        docker exec hostsvc-link bash -c "mkdir -p \"$TARGET_DIR\""
+
+        echo "Download the latest release of CodeQL CLI"
+        echo "Downloading CodeQL CLI ${LATEST_RELEASE}..."
+        docker exec hostsvc-link bash -c "curl -L \"$DOWNLOAD_URL\" -o \"$ZIP_FILE\""
+
+        echo "Extract the downloaded zip file"
+        echo "Extracting CodeQL CLI..."
+        docker exec hostsvc-link bash -c "unzip -o \"$ZIP_FILE\" -d \"$TARGET_DIR\""
+
+        echo "Clean up the zip file"
+        docker exec hostsvc-link bash -c "rm \"$ZIP_FILE\""
+
+        echo "Optionally, add CodeQL CLI to PATH by adding it to .bashrc or .bash_profile"
+        docker exec hostsvc-link bash -c "echo \"export PATH=\$PATH:$TARGET_DIR/codeql\" >> $HOME/.bashrc"
+        docker exec hostsvc-link bash -c "source $HOME/.bashrc"
+
+        echo "CodeQL CLI installation completed."
+
+    - name: codeql-init
+      shell: bash
+      run: |
+        docker exec hostsvc-link bash -c "codeql database create my-codeql-database --language=csharp"
+    
     - name: manual-build-project-service
       shell: bash
       run: |
         docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src"
         echo "output build directory:"
         tree ./src/bin
-
+  
     - name: manual-build-project-plugin-base
       shell: bash
       run: |
         docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
         echo "output build directory:"
         tree ./src_pluginBase/bin
+
+    - name: codeql-analyze
+      shell: bash
+      run: |
+        docker exec hostsvc-link bash -c "codeql database analyze my-codeql-database security-extended,security-and-quality --format=csv --output=analysis-results.csv"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
