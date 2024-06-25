@@ -47,21 +47,6 @@ jobs:
         GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
         SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
 
-    - name: Stand up Devcontainer
-      shell: bash
-      run: |
-
-        devcontainer up --workspace-folder ${PWD} \
-            --workspace-mount-consistency cached \
-            --id-label devcontainer.local_folder=${PWD} \
-            --default-user-env-probe loginInteractiveShell \
-            --build-no-cache \
-            --remove-existing-container \
-            --mount type=volume,source=vscode,target=/vscode,external=true \
-            --update-remote-user-uid-default on \
-            --mount-workspace-git-root true
-        echo $?
-        
     - name: install-codeql
       shell: bash
       run: |
@@ -92,6 +77,21 @@ jobs:
         docker exec hostsvc-link bash -c "source $HOME/.bashrc"
 
         echo "CodeQL CLI installation completed."
+
+    - name: Stand up Devcontainer
+      shell: bash
+      run: |
+
+        devcontainer up --workspace-folder ${PWD} \
+            --workspace-mount-consistency cached \
+            --id-label devcontainer.local_folder=${PWD} \
+            --default-user-env-probe loginInteractiveShell \
+            --build-no-cache \
+            --remove-existing-container \
+            --mount type=volume,source=vscode,target=/vscode,external=true \
+            --update-remote-user-uid-default on \
+            --mount-workspace-git-root true
+        echo $?
 
     - name: codeql-init
       shell: bash
