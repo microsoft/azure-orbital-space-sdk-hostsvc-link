@@ -102,7 +102,7 @@ jobs:
       shell: bash
       run: |
         EXECUTABLE_PATH="/root/codeql/codeql"
-        docker exec $CONTAINER_NAME bash -c "echo 'export PATH=\$PATH:$EXECUTABLE_PATH' > /etc/profile.d/codeql.sh"
+        docker exec hostsvc-link bash -c "echo 'export PATH=\$PATH:$EXECUTABLE_PATH' > /etc/profile.d/codeql.sh"
         docker exec hostsvc-link bash -c "codeql database create my-codeql-database --language=csharp"
     
     - name: manual-build-project-service
@@ -123,7 +123,7 @@ jobs:
       shell: bash
       run: |
         EXECUTABLE_PATH="/root/codeql/codeql"
-        docker exec $CONTAINER_NAME bash -c "echo 'export PATH=\$PATH:$EXECUTABLE_PATH' > /etc/profile.d/codeql.sh"
+        docker exec hostsvc-link bash -c "echo 'export PATH=\$PATH:$EXECUTABLE_PATH' > /etc/profile.d/codeql.sh"
         docker exec hostsvc-link bash -c "codeql database analyze my-codeql-database security-extended,security-and-quality --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
 
     - name: Upload analysis results
