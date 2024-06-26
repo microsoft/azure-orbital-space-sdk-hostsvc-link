@@ -98,6 +98,12 @@ jobs:
       
         echo "CodeQL CLI installation completed."
 
+    - name: restore-projects
+      shell: bash
+      run: |
+          docker exec hostsvc-link bash -c "dotnet restore /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
+          docker exec hostsvc-link bash -c "dotnet restore /workspaces/hostsvc-link/src"
+
     - name: codeql-init
       shell: bash
       run: |
