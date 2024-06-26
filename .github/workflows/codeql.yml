@@ -91,7 +91,7 @@ jobs:
         # Find the correct path to the codeql executable and update the PATH or use it directly in subsequent commands
         # This step is crucial and might need adjustment based on the actual structure of the CodeQL CLI zip file
         # Assuming codeql is in /root/codeql/codeql after extraction
-        EXECUTABLE_PATH="/root/codeql/codeql"
+        EXECUTABLE_PATH="/root/codeql/codeql/codeql"
       
         # Optionally, update the PATH in a way that's guaranteed to work for non-interactive shells
         docker exec $CONTAINER_NAME bash -c "echo 'export PATH=\$PATH:$EXECUTABLE_PATH' > /etc/profile.d/codeql.sh"
@@ -101,7 +101,7 @@ jobs:
     - name: codeql-init
       shell: bash
       run: |
-        docker exec hostsvc-link bash -c "echo 'export PATH=\$PATH:/root/codeql/codeql' > /etc/profile.d/codeql.sh"
+        docker exec hostsvc-link bash -c "echo 'export PATH=\$PATH:/root/codeql/codeql/codeql' > /etc/profile.d/codeql.sh"
         docker exec hostsvc-link bash -c "codeql database create my-codeql-database --language=csharp"
     
     - name: manual-build-project-service
@@ -121,7 +121,7 @@ jobs:
     - name: codeql-analyze
       shell: bash
       run: |
-        docker exec hostsvc-link bash -c "echo 'export PATH=\$PATH:/root/codeql/codeql' > /etc/profile.d/codeql.sh"
+        docker exec hostsvc-link bash -c "echo 'export PATH=\$PATH:/root/codeql/codeql/codeql' > /etc/profile.d/codeql.sh"
         docker exec hostsvc-link bash -c "codeql database analyze my-codeql-database security-extended,security-and-quality --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
 
     - name: Upload analysis results
