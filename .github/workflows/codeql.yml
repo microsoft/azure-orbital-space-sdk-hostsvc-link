@@ -131,7 +131,7 @@ jobs:
           echo ""
 
           echo "Database Query..."
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name security-extended,security-and-quality --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name --download security-extended --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
 
     # - name: Upload analysis results
     #   uses: actions/upload-artifact@v2
