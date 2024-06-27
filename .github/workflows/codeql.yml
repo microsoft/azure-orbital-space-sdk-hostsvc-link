@@ -101,37 +101,40 @@ jobs:
     - name: restore-projects
       shell: bash
       run: |
-          docker exec hostsvc-link bash -c "dotnet restore /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
-          docker exec hostsvc-link bash -c "dotnet restore /workspaces/hostsvc-link/src"
+          container_name="hostsvc-link"
+          database_name="hostsvc-link-src"
+          cs_proj_name="/workspaces/hostsvc-link/src/hostsvc-link.csproj"
+          source_directory="/workspaces/hostsvc-link/src"
 
-    - name: codeql-init
-      shell: bash
-      run: |
-        docker exec hostsvc-link bash -c "echo 'export PATH=\$PATH:/root/codeql/codeql/codeql' > /etc/profile.d/codeql.sh"
-        docker exec hostsvc-link bash -c "bash /root/codeql/codeql/codeql database create my-codeql-database --language=csharp"
-    
-    - name: manual-build-project-service
-      shell: bash
-      run: |
-        docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src"
-        echo "output build directory:"
-        tree ./src/bin
-  
-    - name: manual-build-project-plugin-base
-      shell: bash
-      run: |
-        docker exec hostsvc-link bash -c "dotnet build /workspaces/hostsvc-link/src_pluginBase/pluginBase.csproj"  
-        echo "output build directory:"
-        tree ./src_pluginBase/bin
+          echo "Init database..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database init $database_name -s $source_directory --language=csharp --overwrite"
+          echo ""
 
-    - name: codeql-analyze
-      shell: bash
-      run: |
-        docker exec hostsvc-link bash -c "echo 'export PATH=\$PATH:/root/codeql/codeql/codeql' > /etc/profile.d/codeql.sh"
-        docker exec hostsvc-link bash -c "bash /root/codeql/codeql/codeql database analyze my-codeql-database security-extended,security-and-quality --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
+          echo "Trace commands dotnet clean..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet clean $cs_proj_name"
+          echo ""
 
-    - name: Upload analysis results
-      uses: actions/upload-artifact@v2
-      with:
-        name: codeql-analysis-results
-        path: /var/spacedev/tmp/analysis-results.csv
+          echo "Trace commands dotnet restore..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet restore $cs_proj_name"
+          echo ""
+
+          echo "Trace commands dotnet build..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet build $cs_proj_name"
+          echo ""
+
+          echo "Database finalize..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database finalize $database_name"
+          echo ""
+
+          echo "Resolve qlpacks..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql resolve qlpacks"
+          echo ""
+
+          echo "Database Query..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name security-extended,security-and-quality --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
+
+    # - name: Upload analysis results
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: codeql-analysis-results
+    #     path: /var/spacedev/tmp/analysis-results.csv
