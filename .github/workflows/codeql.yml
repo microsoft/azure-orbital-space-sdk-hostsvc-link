@@ -110,6 +110,10 @@ jobs:
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database init $database_name -s $source_directory --language=csharp --overwrite"
           echo ""
 
+          echo "Download qlpacks..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/csharp-queries@1.0.2"
+          echo ""
+
           echo "Trace commands dotnet clean..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet clean $cs_proj_name"
           echo ""
