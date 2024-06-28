@@ -19,7 +19,8 @@ public partial class MessageHandler<T> : Microsoft.Azure.SpaceFx.Core.IMessageHa
     }
 
     public void MessageReceived(T message, MessageFormats.Common.DirectToApp fullMessage) => Task.Run(() => {
-        using (var scope = _serviceProvider.CreateScope()) {
+        try {
+            using (var scope = _serviceProvider.CreateScope()) {
 
             if (message == null || EqualityComparer<T>.Default.Equals(message, default)) {
                 _logger.LogInformation("Received empty message '{messageType}' from '{appId}'.  Discarding message.", typeof(T).Name, fullMessage.SourceAppId);
@@ -30,7 +31,12 @@ public partial class MessageHandler<T> : Microsoft.Azure.SpaceFx.Core.IMessageHa
                 case string messageType when messageType.Equals(typeof(MessageFormats.HostServices.Link.LinkRequest).Name, StringComparison.CurrentCultureIgnoreCase):
                     LinkRequestHandler(message: message as MessageFormats.HostServices.Link.LinkRequest, fullMessage: fullMessage);
                     break;
+            }   
             }
         }
+        catch (Exception ex) {
+            var no_error = true;
+        }
+        
     });
 }
