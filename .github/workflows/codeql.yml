@@ -137,8 +137,8 @@ jobs:
           echo "Database Query..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
 
-    # - name: Upload analysis results
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: codeql-analysis-results
-    #     path: /var/spacedev/tmp/analysis-results.csv
+    - name: Upload analysis results
+      uses: actions/upload-artifact@v2
+      with:
+        name: codeql-analysis-results
+        path: /var/spacedev/tmp/analysis-results.csv
