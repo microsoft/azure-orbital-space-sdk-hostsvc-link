@@ -112,15 +112,10 @@ jobs:
 
           echo "Download qlpacks..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/csharp-queries@1.0.2"
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack install codeql/csharp-queries@1.0.2"
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/threat-models@1.0.2"
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack install codeql/threat-models@1.0.2"
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/csharp-solorigate-queries@1.0.1"
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack install codeql/csharp-solorigate-queries@1.0.1"
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/csharp-solorigate-all@1.0.1"
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack install codeql/csharp-solorigate-all@1.0.1"
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/csharp-upgrades@0.0.7"
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack install codeql/csharp-upgrades@0.0.7"
 
           echo ""
 
