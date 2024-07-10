@@ -22,7 +22,7 @@ on:
 jobs:
   analyze:
     name: Analyze (csharp)
-    
+
     runs-on: 'ubuntu-latest'
     timeout-minutes: 360
     permissions:
@@ -35,7 +35,7 @@ jobs:
       # only required for workflows in private repositories
       actions: read
       contents: read
-   
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -59,43 +59,43 @@ jobs:
             --update-remote-user-uid-default on \
             --mount-workspace-git-root true
         echo $?
-  
+
     - name: install-codeql
       shell: bash
       run: |
         CONTAINER_NAME="hostsvc-link"
-      
+
         # Determine the latest release version of CodeQL CLI
         docker exec $CONTAINER_NAME bash -c "curl -s https://api.github.com/repos/github/codeql-cli-binaries/releases/latest | grep 'tag_name' | awk '{print substr(\$2, 2, length(\$2)-3)}'" > latest_release.txt
         LATEST_RELEASE=$(<latest_release.txt)
-      
+
         # Define the download URL and target directory
         DOWNLOAD_URL="https://github.com/github/codeql-cli-binaries/releases/download/${LATEST_RELEASE}/codeql-linux64.zip"
         TARGET_DIR="/root/codeql" # Adjust the target directory as per the container's file system
         ZIP_FILE="$TARGET_DIR/codeql.zip"
-      
+
         # Create target directory if it doesn't exist
         docker exec $CONTAINER_NAME bash -c "mkdir -p $TARGET_DIR"
-      
+
         # Download the latest release of CodeQL CLI
         echo "Downloading CodeQL CLI ${LATEST_RELEASE}..."
         docker exec $CONTAINER_NAME bash -c "curl -L '$DOWNLOAD_URL' -o '$ZIP_FILE'"
-      
+
         # Extract the downloaded zip file
         echo "Extracting CodeQL CLI..."
         docker exec $CONTAINER_NAME bash -c "unzip -o '$ZIP_FILE' -d '$TARGET_DIR'"
-      
+
         # Clean up the zip file
         docker exec $CONTAINER_NAME bash -c "rm '$ZIP_FILE'"
-      
+
         # Find the correct path to the codeql executable and update the PATH or use it directly in subsequent commands
         # This step is crucial and might need adjustment based on the actual structure of the CodeQL CLI zip file
         # Assuming codeql is in /root/codeql/codeql after extraction
         EXECUTABLE_PATH="/root/codeql/codeql/codeql"
-      
+
         # Optionally, update the PATH in a way that's guaranteed to work for non-interactive shells
         docker exec $CONTAINER_NAME bash -c "echo 'export PATH=\$PATH:$EXECUTABLE_PATH' > /etc/profile.d/codeql.sh"
-      
+
         echo "CodeQL CLI installation completed."
 
     - name: restore-projects
@@ -128,9 +128,9 @@ jobs:
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet restore $cs_proj_name"
           echo ""
 
-          echo "Trace commands dotnet build..."
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet build $cs_proj_name"
-          echo ""
+          # echo "Trace commands dotnet build..."
+          # docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet build $cs_proj_name"
+          # echo ""
 
           echo "Database finalize..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database finalize $database_name"
@@ -140,8 +140,10 @@ jobs:
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql resolve qlpacks"
           echo ""
 
-          echo "Database Query..."
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database create $database_name --language=csharp --command='dotnet build $cs_proj_name' && bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
+
+          #echo "Database Query..."
+          #docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
 
     - name: Upload analysis results
       uses: actions/upload-artifact@v2
