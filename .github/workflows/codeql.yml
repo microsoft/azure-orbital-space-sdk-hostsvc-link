@@ -116,7 +116,7 @@ jobs:
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/csharp-solorigate-queries@1.0.1"
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/csharp-solorigate-all@1.0.1"
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download codeql/csharp-upgrades@0.0.7"
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download githubsecuritylab/codeql-python-queries"
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql pack download githubsecuritylab/codeql-csharp-queries"
 
           echo ""
 
@@ -141,7 +141,7 @@ jobs:
           echo ""
 
           echo "Database Query..."
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-python-queries --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
 
           echo "Get help..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze -h"
