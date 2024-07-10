@@ -132,15 +132,19 @@ jobs:
           # docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet build $cs_proj_name"
           # echo ""
 
-          echo "Database finalize..."
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database finalize $database_name"
-          echo ""
+          # echo "Database finalize..."
+          # docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database finalize $database_name"
+          # echo ""
 
           echo "Resolve qlpacks..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql resolve qlpacks"
           echo ""
 
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database create $database_name --language=csharp --command='dotnet build $cs_proj_name' && bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
+
+          echo "Database finalize..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database finalize $database_name"
+          echo ""
 
           #echo "Database Query..."
           #docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
