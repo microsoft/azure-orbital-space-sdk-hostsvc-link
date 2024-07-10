@@ -38,3 +38,38 @@ jobs:
       GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
       GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
       SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
+  
+  test-hostsvc-link-smb-on-amd64:
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+
+    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/test-app.yaml@main
+    with:
+      APP_NAME: hostsvc-link
+      WORKFLOW_AGENT: ubuntu-latest
+      SMB_ON: "true"
+    secrets:
+      GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
+      GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
+      SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
+      
+
+  test-hostsvc-link-smb-on-arm64:
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+
+    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/test-app.yaml@main
+    with:
+      APP_NAME: hostsvc-link
+      WORKFLOW_AGENT: spacesdk-ubuntu-2204LTS-arm64
+      SMB_ON: "true"
+    secrets:
+      GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
+      GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
+      SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
