@@ -141,10 +141,7 @@ jobs:
           echo ""
 
           echo "Database Query..."
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=csv --output=/var/spacedev/tmp/analysis-results.csv"
-
-          echo "Get help..."
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze -h"
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.csv"
 
     - name: Upload analysis results
       uses: actions/upload-artifact@v2
