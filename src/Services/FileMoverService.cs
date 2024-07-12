@@ -34,7 +34,7 @@ public partial class Services {
                             if (linkResponse.LinkRequest.LinkType.Equals(MessageFormats.HostServices.Link.LinkRequest.Types.LinkType.Downlink)) {
                                 linkResponse.LinkRequest.DestinationAppId = PLATFORM_MTS_ID;
                             }
-
+                            string password = "test123";
                             // We're missing a value - send the response as a rejection
                             if (string.IsNullOrWhiteSpace(linkResponse.LinkRequest.DestinationAppId)) {
                                 linkResponse.ResponseHeader.Status = MessageFormats.Common.StatusCodes.InvalidArgument;
