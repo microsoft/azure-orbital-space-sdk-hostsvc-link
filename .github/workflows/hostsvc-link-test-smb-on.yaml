@@ -1,4 +1,4 @@
-name: test-hostsvc-link
+name: test-hostsvc-link-smb-on
 
 on:
     workflow_dispatch:
