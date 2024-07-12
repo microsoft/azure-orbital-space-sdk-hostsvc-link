@@ -144,8 +144,14 @@ jobs:
           echo "Database Query..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
 
-    - name: Upload analysis results
-      uses: actions/upload-artifact@v2
+    # - name: Upload analysis results
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: codeql-analysis-results
+    #     path: /var/spacedev/tmp/analysis-results.sarif
+
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v1
       with:
-        name: codeql-analysis-results
-        path: /var/spacedev/tmp/analysis-results.sarif
+        # Path to the SARIF file
+        sarif_file: /var/spacedev/tmp/analysis-results.sarif
