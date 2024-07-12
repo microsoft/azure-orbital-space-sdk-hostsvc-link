@@ -137,8 +137,6 @@ jobs:
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql resolve qlpacks"
           echo ""
 
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
-
           echo "Database finalize..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database finalize $database_name"
           echo ""
