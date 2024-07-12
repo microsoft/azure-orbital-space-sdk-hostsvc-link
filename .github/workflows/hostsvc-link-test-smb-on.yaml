@@ -1,4 +1,4 @@
-name: test-hostsvc-link
+name: test-hostsvc-link-smb-on
 
 on:
     workflow_dispatch:
@@ -6,7 +6,8 @@ on:
       branches: [ main ]
 
 jobs:
-  test-hostsvc-link-amd64:
+  
+  test-hostsvc-link-smb-on-amd64:
     permissions:
       contents: read
       issues: read
@@ -17,13 +18,14 @@ jobs:
     with:
       APP_NAME: hostsvc-link
       WORKFLOW_AGENT: ubuntu-latest
+      SMB_ON: "true"
     secrets:
       GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
       GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
       SETUP_REPO_URL: ${{ secrets.SETUP_REPO_URL }}
       
 
-  test-hostsvc-link-arm64:
+  test-hostsvc-link-smb-on-arm64:
     permissions:
       contents: read
       issues: read
@@ -34,6 +36,7 @@ jobs:
     with:
       APP_NAME: hostsvc-link
       WORKFLOW_AGENT: spacesdk-ubuntu-2204LTS-arm64
+      SMB_ON: "true"
     secrets:
       GIT_HUB_USER_NAME: ${{ secrets.GIT_HUB_USER_NAME }}
       GIT_HUB_USER_TOKEN: ${{ secrets.GIT_HUB_USER_TOKEN }}
