@@ -144,8 +144,8 @@ jobs:
           echo ""
 
           echo "Database Query..."
-          # docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name --download githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name codeql/csharp-queries codeql/csharp-solorigate-queries githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif --sarif-add-snippets --sarif-add-query-help --sarif-group-rules-by-pack --no-sarif-minify"
+          # docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze $database_name --download githubsecuritylab/codeql-csharp-queries --format=sarif-latest --output=/var/spacedev/tmp/analysis-results.sarif"
 
           echo "Getting help with analyze command..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database analyze -h"
