@@ -107,8 +107,8 @@ jobs:
           source_directory="/workspaces/hostsvc-link/src"
 
           echo "Init database..."
-          #docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database init $database_name -s $source_directory --language=csharp --overwrite"
-          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database create $database_name --language=csharp --command=\"dotnet build $cs_proj_name\""
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database init $database_name -s $source_directory --language=csharp --overwrite"
+          #docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database create $database_name --language=csharp --command=\"dotnet build $cs_proj_name\""
           echo ""
 
           echo "Download qlpacks..."
@@ -129,13 +129,9 @@ jobs:
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet restore $cs_proj_name"
           echo ""
 
-          # echo "Trace commands dotnet build..."
-          # docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet build $cs_proj_name"
-          # echo ""
-
-          # echo "Database finalize..."
-          # docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database finalize $database_name"
-          # echo ""
+          echo "Trace commands dotnet build..."
+          docker exec $container_name bash -c "bash /root/codeql/codeql/codeql database trace-command $database_name dotnet build $cs_proj_name"
+          echo ""
 
           echo "Resolve qlpacks..."
           docker exec $container_name bash -c "bash /root/codeql/codeql/codeql resolve qlpacks"
