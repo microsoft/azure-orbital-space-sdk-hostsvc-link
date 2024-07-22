@@ -32,11 +32,13 @@ public static class Models {
         public int FILEMOVER_POLLING_MS { get; set; }
         public string LEAVE_SOURCE_FILE_PROPERTY_VALUE { get; set; }
         public string ALL_XFER_DIR { get; set; }
+        public bool ALLOW_LINKS_TO_DEPLOYMENT_SVC { get; set; }
 
         public APP_CONFIG() : base() {
             FILEMOVER_POLLING_MS = int.Parse(Core.GetConfigSetting("filemoverpollingms").Result);
             LEAVE_SOURCE_FILE_PROPERTY_VALUE = Core.GetConfigSetting("leavesourcefilepropertyvalue").Result;
             ALL_XFER_DIR = Path.Combine(Core.GetConfigSetting("spacefx_cache").Result, Core.GetConfigSetting("allxferdirectory").Result);
+            ALLOW_LINKS_TO_DEPLOYMENT_SVC = bool.Parse(Core.GetConfigSetting("allowlinkstodeploymentsvc").Result);
         }
     }
 }
