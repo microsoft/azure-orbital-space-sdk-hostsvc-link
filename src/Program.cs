@@ -35,5 +35,18 @@ public class Program {
             });
         });
         app.Run();
+
+        // Add a middleware to catch exceptions and stop the host gracefully
+        app.Use(async (context, next) => {
+            try {
+                await next.Invoke();
+            } catch (Exception ex) {
+                Console.Error.WriteLine($"Triggering shutdown due to exception caught in global exception handler.  Error: {ex.Message}.  Stack Trace: {ex.StackTrace}");
+
+                // Stop the host gracefully so it triggers the pod to error
+                var lifetime = context.RequestServices.GetService<IHostApplicationLifetime>();
+                lifetime?.StopApplication();
+            }
+        });
     }
 }
