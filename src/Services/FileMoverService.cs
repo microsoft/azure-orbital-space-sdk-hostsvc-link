@@ -41,6 +41,15 @@ public partial class Services {
                                 continue;
                             }
 
+                            if (string.Equals(linkResponse.LinkRequest.DestinationAppId, "platform-deployment", StringComparison.OrdinalIgnoreCase) && !_appConfig.ALLOW_LINKS_TO_DEPLOYMENT_SVC) {
+                                _logger.LogWarning("LinkRequest to deployment service (platform-deployment) is disabled by configuration.  Rejecting link request (trackingId: '{trackingId}' / correlationId: '{correlationId}')", linkResponse.ResponseHeader.TrackingId, linkResponse.ResponseHeader.CorrelationId);
+                                linkResponse.ResponseHeader.Message = "LinkRequest to deployment service (platform-deployment) is disabled by configuration.";
+                                linkResponse.ResponseHeader.Status = MessageFormats.Common.StatusCodes.Unauthorized;
+                                await SendResponseToApps(linkResponse);
+                                continue;
+                            }
+
+
                             linkResponse.LinkRequest.DestinationAppId = linkResponse.LinkRequest.DestinationAppId.ToLower();
 
 

@@ -29,10 +29,21 @@ public partial class MessageHandler<T> {
             // Update the request if our plugins changed it
             if (pluginResult == null) {
                 _logger.LogInformation("Plugins nullified '{messageType}'.  Dropping Message (trackingId: '{trackingId}' / correlationId: '{correlationId}')", message.GetType().Name, message.RequestHeader.TrackingId, message.RequestHeader.CorrelationId);
+                returnResponse.ResponseHeader.Message = "LinkRequest rejected by plugins.  For more information, see the logs and/or contact your cluster administrator.";
+                returnResponse.ResponseHeader.Status = MessageFormats.Common.StatusCodes.Rejected;
+                _client.DirectToApp(appId: fullMessage.SourceAppId, message: returnResponse);
                 return;
             }
 
             returnResponse.LinkRequest = pluginResult;
+
+            if (string.Equals(returnResponse.LinkRequest.DestinationAppId, "platform-deployment", StringComparison.OrdinalIgnoreCase) && !_appConfig.ALLOW_LINKS_TO_DEPLOYMENT_SVC) {
+                _logger.LogWarning("LinkRequest to deployment service (platform-deployment) is disabled by configuration.  Rejecting link request (trackingId: '{trackingId}' / correlationId: '{correlationId}')", message.RequestHeader.TrackingId, message.RequestHeader.CorrelationId);
+                returnResponse.ResponseHeader.Message = "LinkRequest to deployment service (platform-deployment) is disabled by configuration.";
+                returnResponse.ResponseHeader.Status = MessageFormats.Common.StatusCodes.Unauthorized;
+                _client.DirectToApp(appId: fullMessage.SourceAppId, message: returnResponse);
+                return;
+            }
 
             _logger.LogDebug("Passing '{messageType}' to FileMoverService for processing. (trackingId: '{trackingId}' / correlationId: '{correlationId}')", message.GetType().Name, message.RequestHeader.TrackingId, message.RequestHeader.CorrelationId);
 
