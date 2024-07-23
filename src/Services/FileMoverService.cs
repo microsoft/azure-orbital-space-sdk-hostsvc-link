@@ -245,10 +245,10 @@ public partial class Services {
         /// <returns>void</returns>
         protected internal void QueueFileMove(MessageFormats.HostServices.Link.LinkResponse linkResponse) {
             try {
-                _logger.LogTrace("Adding LinkRequest to queue. (trackingId: '{trackingId}' / correlationId: '{correlationId}')", linkResponse.ResponseHeader.TrackingId, linkResponse.ResponseHeader.CorrelationId);
+                _logger.LogTrace("Adding LinkRequest to queue. (trackingId: '{trackingId}' / correlationId: '{correlationId}' / status: '{status}')", linkResponse.ResponseHeader.TrackingId, linkResponse.ResponseHeader.CorrelationId, linkResponse.ResponseHeader.Status);
                 _linkResponseQueue.Add(linkResponse);
             } catch (Exception ex) {
-                _logger.LogError("Failure storing LinkRequest to queue (trackingId: '{trackingId}' / correlationId: '{correlationId}').  Error: {errorMessage}", linkResponse.ResponseHeader.TrackingId, linkResponse.ResponseHeader.CorrelationId, ex.Message);
+                _logger.LogError("Failure storing LinkRequest to queue (trackingId: '{trackingId}' / correlationId: '{correlationId}' / status '{status}').  Error: {errorMessage}", linkResponse.ResponseHeader.TrackingId, linkResponse.ResponseHeader.CorrelationId, linkResponse.ResponseHeader.Status, ex.Message);
             }
         }
 
@@ -260,7 +260,7 @@ public partial class Services {
             return Task.Run(async () => {
                 MessageFormats.HostServices.Link.LinkResponse? pluginResponse = message;
                 MessageFormats.HostServices.Link.LinkRequest? pluginRequest = message.LinkRequest;
-                _logger.LogDebug("Passing message '{messageType}' and '{responseType}' to plugins (trackingId: '{trackingId}' / correlationId: '{correlationId}')", message.GetType().Name, message.LinkRequest.GetType().Name, message.ResponseHeader.TrackingId, message.ResponseHeader.CorrelationId);
+                _logger.LogDebug("Passing message '{messageType}' and '{responseType}' to plugins (trackingId: '{trackingId}' / correlationId: '{correlationId}' / status: '{status}')", message.GetType().Name, message.LinkRequest.GetType().Name, message.ResponseHeader.TrackingId, message.ResponseHeader.CorrelationId, message.ResponseHeader.Status);
 
                 (MessageFormats.HostServices.Link.LinkRequest? output_request, MessageFormats.HostServices.Link.LinkResponse? output_response) =
                                                 _pluginLoader.CallPlugins<MessageFormats.HostServices.Link.LinkRequest?, Plugins.PluginBase, MessageFormats.HostServices.Link.LinkResponse>(
@@ -268,10 +268,10 @@ public partial class Services {
                                                     pluginDelegate: _pluginDelegates.LinkResponse);
 
 
-                _logger.LogDebug("Plugins finished processing '{messageType}' and '{responseType}' (trackingId: '{trackingId}' / correlationId: '{correlationId}')", message.GetType().Name, message.LinkRequest.GetType().Name, message.ResponseHeader.TrackingId, message.ResponseHeader.CorrelationId);
+                _logger.LogDebug("Plugins finished processing '{messageType}' and '{responseType}' (trackingId: '{trackingId}' / correlationId: '{correlationId}' / status: '{status}')", message.GetType().Name, message.LinkRequest.GetType().Name, message.ResponseHeader.TrackingId, message.ResponseHeader.CorrelationId, message.ResponseHeader.Status);
 
                 if (output_response == null || output_request == null) {
-                    _logger.LogInformation("Plugins nullified '{messageType}' or '{output_requestMessageType}'.  Dropping Message (trackingId: '{trackingId}' / correlationId: '{correlationId}')", message.LinkRequest.GetType().Name, message.GetType().Name, message.ResponseHeader.TrackingId, message.ResponseHeader.CorrelationId);
+                    _logger.LogInformation("Plugins nullified '{messageType}' or '{output_requestMessageType}'.  Dropping Message (trackingId: '{trackingId}' / correlationId: '{correlationId}' / status: '{status}')", message.LinkRequest.GetType().Name, message.GetType().Name, message.ResponseHeader.TrackingId, message.ResponseHeader.CorrelationId, message.ResponseHeader.Status);
                     return;
                 }
 
@@ -284,7 +284,7 @@ public partial class Services {
                     return;
                 }
 
-                _logger.LogInformation("Sending successful '{messageType}' to '{sourceAppId}' and '{destinationAppId}' (trackingId: '{trackingId}' / correlationId: '{correlationId}')", message.GetType().Name, message.LinkRequest.RequestHeader.AppId, message.LinkRequest.DestinationAppId, message.ResponseHeader.TrackingId, message.ResponseHeader.CorrelationId);
+                _logger.LogInformation("Sending successful '{messageType}' to '{sourceAppId}' and '{destinationAppId}' (trackingId: '{trackingId}' / correlationId: '{correlationId}' / status: '{status}')", message.GetType().Name, message.LinkRequest.RequestHeader.AppId, message.LinkRequest.DestinationAppId, message.ResponseHeader.TrackingId, message.ResponseHeader.CorrelationId, message.ResponseHeader.Status);
                 await _client.DirectToApp(appId: message.LinkRequest.RequestHeader.AppId, message: message);
                 await _client.DirectToApp(appId: message.LinkRequest.DestinationAppId, message: message);
             });
