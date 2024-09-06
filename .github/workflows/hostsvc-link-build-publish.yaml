@@ -12,7 +12,7 @@ jobs:
       contents: read
       packages: write
 
-    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@main
+    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@0.11.0-nightly
     with:
       APP_PROJECT: ./src/hostsvc-link.csproj
       NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
@@ -32,7 +32,7 @@ jobs:
       contents: read
       packages: write
 
-    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@main
+    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/service-build.yml@0.11.0-nightly
     with:
       APP_PROJECT: ./src/hostsvc-link.csproj
       NUGET_PROJECT: ./src_pluginBase/pluginBase.csproj
