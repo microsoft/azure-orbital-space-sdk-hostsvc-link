@@ -3,7 +3,9 @@ name: test-hostsvc-link-smb-on
 on:
     workflow_dispatch:
     pull_request:
-      branches: [ main ]
+      branches:
+        - main
+        - '[0-9]*.[0-9]*.[0-9]*-nightly'
 
 jobs:
   
@@ -14,7 +16,7 @@ jobs:
       checks: write
       pull-requests: write
 
-    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/test-app.yaml@main
+    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/test-app.yaml@0.11.0-nightly
     with:
       APP_NAME: hostsvc-link
       WORKFLOW_AGENT: ubuntu-latest
@@ -32,7 +34,7 @@ jobs:
       checks: write
       pull-requests: write
 
-    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/test-app.yaml@main
+    uses: microsoft/azure-orbital-space-sdk-github-actions/.github/workflows/test-app.yaml@0.11.0-nightly
     with:
       APP_NAME: hostsvc-link
       WORKFLOW_AGENT: spacesdk-ubuntu-2204LTS-arm64
